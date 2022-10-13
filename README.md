@@ -2,6 +2,9 @@
 
 Configure AWS credential and region environment variables for use in other GitHub Actions.  The environment variables will be detected by both the AWS SDKs and the AWS CLI to determine the credentials and region to use for AWS API calls.
 
+## NOTICE: node12 deprecation warning
+GitHub actions has recently started throwing warning messages regarding the deprecation of Node 12. If you would like to stop seeing this warning, configure your action to use `aws-actions/configure-aws-credentials@v1-node16`. Both the `v1` branch and the `v1-node16` branch will receive the same updates moving forward. See [this issue](https://github.com/aws-actions/configure-aws-credentials/issues/489) for more information on this topic.
+
 **Table of Contents**
 
 <!-- toc -->
@@ -77,9 +80,12 @@ We recommend following [Amazon IAM best practices](https://docs.aws.amazon.com/I
 
 ## Assuming a Role
 We recommend using [GitHub's OIDC provider](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) to get short-lived credentials needed for your actions. 
-Specifying `role-to-assume` without providing an `aws-access-key-id` or a `web-identity-token-file` will signal to the action that you wish to use the OIDC provider.
-The default session duration is 1 hour when using the OIDC provider to directly assume an IAM Role.
-The default session duration is 6 hours when using an IAM User to assume an IAM Role (by providing an `aws-access-key-id`, `aws-secret-access-key`, and a `role-to-assume`) .
+Specifying `role-to-assume` **without** providing an `aws-access-key-id` or a `web-identity-token-file` will signal to the action that you wish to use the OIDC provider.
+
+The default session duration is **1 hour** when using the OIDC provider to directly assume an IAM Role or when an `aws-session-token` is directly provided.
+
+The default session duration is **6 hours** when using an IAM User to assume an IAM Role (by providing an `aws-access-key-id`, `aws-secret-access-key`, and a `role-to-assume`) .
+
 If you would like to adjust this you can pass a duration to `role-duration-seconds`, but the duration cannot exceed the maximum that was defined when the IAM Role was created.
 The default session name is GitHubActions, and you can modify it by specifying the desired name in `role-session-name`.
 The default audience is `sts.amazonaws.com` which you can replace by specifying the desired audience name in `audience`.
